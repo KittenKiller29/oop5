@@ -3,15 +3,12 @@ class Base {//родительский класс
 public:
 	Base() {
 		std::cout << "Base()" << std::endl;
-		name = "Base";
 	}
 	Base(Base* obj) {
 		std::cout << "Base(Base* obj)" << std::endl;
-		name = (*obj).name;
 	}
 	Base(Base& obj) {
 		std::cout << "Base(Base& obj)" << std::endl;
-		name = obj.name;
 	}
 	virtual ~Base() {
 		std::cout << "~Base()" << std::endl;
@@ -36,21 +33,17 @@ public:
 	virtual bool IsA(std::string classname) {//метод для предварительной проверки при приведении типа
 		return classname == "Base";
 	}
-	std::string name;
 };
 class Desk  : public Base {//Дочерний класс
 public:
 	Desk(){
 		std::cout << "Desk()" << std::endl;
-		name = "Desk";
 	}
 	Desk(Desk* obj){
 		std::cout << "Desk(Desk* obj)" << std::endl;
-		name = (*obj).name;
 	}
 	Desk(Desk& obj){
 		std::cout << "Desk(Desk& obj)" << std::endl;
-		name = obj.name;
 	}
 	virtual ~Desk() {
 		std::cout << "~Desk()" << std::endl;
@@ -159,57 +152,28 @@ int main() {
 	std::cout << "}\n";
 	std::cout << "7)\n{\n";//возврат созданных в функциях объектов
 	{
-		std::cout << "func1():\n";//результат выполнения функции 1
-		try {
-			Base b1;
-			b1 = func1();
-			b1.doSomething3();
-		}
-		catch(...){
-			std::cout << "Error" << std::endl;
-		}
-		std::cout << "\nfunc2():\n";//результат выполнения функции 2
-		try {
-			Base* b1 = func2();
-			b1->doSomething3();
-		}
-		catch (...) {
-			std::cout << "Error" << std::endl;
-		}
-		std::cout << "\nfunc3():\n";//результат выполнения функции 3
-		try {
-			Base& b1 = func3();
-			b1.doSomething3();
-		}
-		catch (...) {
-			std::cout << "Error" << std::endl;
-		}
-		std::cout << "\nfunc4():\n";//результат выполнения функции 4
-		try {
-			Base b1;
-			b1=func4();
-			b1.doSomething3();
-		}
-		catch (...) {
-			std::cout << "Error" << std::endl;
-		}
-		std::cout << "\nfunc5():\n";//результат выполнения функции 5
-		try {
-			Base* b1 = func5();
-			b1->doSomething3();
-		}
-		catch (...) {
-			std::cout << "Error" << std::endl;
-		}
-		std::cout << "\nfunc6():\n";//результат выполнения функции 6
-		try {
-			Base& b1 = func6();
-			b1.doSomething3();
-		}
-		catch (...) {
-			std::cout << "Error" << std::endl;
-		}
-		std::cout << std::endl;
+		std::cout << "func1():\n";
+		Base b1;
+		b1 = func1();
+		
+		std::cout << "func2():\n";
+		Base *b2;
+		b2 = func2();
+		
+		std::cout << "func3():\n";
+		Base& b3=func3();
+		
+		std::cout << "func4():\n";
+		Base b4;
+		b4 = func4();
+		
+		std::cout << "func5():\n";
+		Base *b5;
+		b5 = func5();
+		
+		std::cout << "func6():\n";
+		Base& b6=func6();
+		
 	}
 	std::cout << "}\n";
 	return 0;

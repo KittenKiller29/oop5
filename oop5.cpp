@@ -1,4 +1,5 @@
 ﻿#include<iostream>
+#include<vector>
 class Base {//родительский класс
 public:
 	Base() {
@@ -33,6 +34,9 @@ public:
 	virtual bool IsA(std::string classname) {//метод для предварительной проверки при приведении типа
 		return classname == "Base";
 	}
+	std::string test() {
+		return "Im Base";
+	}
 };
 class Desk  : public Base {//Дочерний класс
 public:
@@ -59,6 +63,21 @@ public:
 	}
 	bool IsA(std::string classname) override {
 		return classname == "Desk";
+	}
+	std::string test() {
+		return "Im Desk";
+	}
+};
+class SonDesk: public Base {
+public:
+	bool IsA(std::string classname) {
+		return classname == "SonDesk";
+	}
+	std::string classname() override {
+		return "SonDesk";
+	}
+	std::string test() {
+		return "Im SonDesk";
 	}
 };
 void func() {
@@ -97,6 +116,7 @@ Base& func6() {
 	return *local;
 }
 int main() {
+	srand(time(0));
 	std::cout << "1)\n{\n";//жизненный цикл unique_ptr
 	std::cout << "std::unique_ptr<Base> basa(new Base())" << std::endl;
 	{
@@ -113,28 +133,48 @@ int main() {
 		}
 	}
 	std::cout << "}\n";
-	std::cout << "3)\n{\n";//небезопасное приведение типов
+	std::cout << "3)\n{\n";//небезопасное и безопасное приведение типов
 	{
-		std::cout << "(static_cast<Desk*>(stcast))->doSomething3()" << std::endl;
-		Base* stcast = new Desk();
-		if (stcast->IsA("Desk")) {
-			(static_cast<Desk*>(stcast))->doSomething3();
+		int dc=0, sc = 0;
+		Base* obej[30];
+		for (int i = 0; i < 30; i++) {
+			if (rand() % 2)
+				obej[i] = new Desk;
+			else
+				obej[i] = new SonDesk;
 		}
-		delete stcast;
+		for (int i = 0; i < 30; i++) {
+			if (rand() % 2) {
+				Desk* c = dynamic_cast<Desk*>(obej[i]);
+				if (c != nullptr) {
+					dc++;
+					std::cout << c->test() << std::endl;
+				}
+				else {
+					SonDesk *a = dynamic_cast<SonDesk*>(obej[i]);
+					if (a != nullptr) {
+						dc++;
+						std::cout << a->test() << std::endl;
+					}
+				}
+			}
+			else {	
+				if (obej[i]->IsA("Desk")) {
+					sc++;
+					std::cout << static_cast<Desk*>(obej[i])->test() << std::endl;
+				}
+				if (obej[i]->IsA("SonDesk")) {
+					sc++;
+					std::cout << static_cast<SonDesk*>(obej[i])->test() << std::endl;
+				}
+				
+			}
+		}
+		std::cout << "dc: " << dc << std::endl;
+		std::cout << "sc: " << sc << std::endl;
 	}
 	std::cout << "}\n";
-	std::cout << "4)\n{\n";//безопасное приведение типов
-	{
-		std::cout << "(dynamic_cast<Desk*>(dcast))->doSomething3()" << std::endl;
-		Base* dcast = new Desk();
-		Desk* c = dynamic_cast<Desk*>(dcast);
-		if (c != nullptr) {
-			c->doSomething3();
-		}
-		delete dcast;
-	}
-	std::cout << "}\n";
-	std::cout << "5)\n{\n";//вызов виртуальных и невиртуальных методов в дочернем объекте
+	std::cout << "4)\n{\n";//вызов виртуальных и невиртуальных методов в дочернем объекте
 	{
 		Desk testDaughter;
 		std::cout << "Result of Desk::doSomething1() and non virtual method2: " << std::endl;
@@ -143,14 +183,14 @@ int main() {
 		testDaughter.doSomething2();
 	}
 	std::cout << "}\n";
-	std::cout << "6)\n{\n";//передача объектов в качестве параметров
+	std::cout << "5)\n{\n";//передача объектов в качестве параметров
 	{
 		std::unique_ptr <Base> test(new Desk());
 		func(*test);
 		func(test.get());
 	}
 	std::cout << "}\n";
-	std::cout << "7)\n{\n";//возврат созданных в функциях объектов
+	std::cout << "6)\n{\n";//возврат созданных в функциях объектов
 	{
 		std::cout << "func1():\n";
 		Base b1;
